@@ -59,7 +59,7 @@ Expected output: `Output written on main_<company>_<role>.pdf (2 pages, ...)`. A
     linkcolor=blue,
     filecolor=magenta,
     urlcolor=blue,
-    pdftitle={[YOUR_NAME] - CV},
+    pdftitle={Vinay Kumar S - CV},
     % Keep pdfpagemode=UseNone: this block runs after moderncv's own
     % \AtEndPreamble (moderncv.cls sets pdfpagemode there), so a FullScreen
     % value here would win and open every CV in fullscreen presentation mode.
@@ -69,13 +69,13 @@ Expected output: `Output written on main_<company>_<role>.pdf (2 pages, ...)`. A
 \usepackage{import}
 
 % Personal data
-\name{[FIRST_NAME]}{[LAST_NAME]}
+\name{Vinay}{Kumar S}
 % If you have no address to list, DELETE this whole line. \address{}{}{} fails
 % with "There's no line here to end" on every moderncv version.
-\address{[YOUR_ADDRESS]}{}{}
-\phone[mobile]{[YOUR_PHONE]}
-\email{[YOUR_EMAIL]}
-\extrainfo{\href{[YOUR_LINKEDIN_URL]}{LinkedIn}, \href{[YOUR_GITHUB_URL]}{GitHub}}
+\address{Bengaluru, Karnataka, India}{}{}
+\phone[mobile]{+91 96063 58639}
+\email{vinaykumarsrinivas1980@gmail.com}
+\extrainfo{\href{https://linkedin.com/in/vinay-kumar-s}{LinkedIn}, \href{https://github.com/vinaykumar}{GitHub}}
 
 \begin{document}
 \makecvtitle
@@ -137,11 +137,11 @@ When the role sits outside your home domain, **lead with the domain-transfer arg
 **Create 2-3 profile statement templates for your main role types:**
 
 <!-- SETUP: These are populated based on your background -->
-**For [YOUR_PRIMARY_ROLE_TYPE] roles:**
-> [YOUR_PROFILE_STATEMENT_TEMPLATE_1]
+**For AI/ML & Python Developer roles:**
+> AI/ML undergraduate with hands-on experience in Python, Scikit-learn, and on-device LLM integration (Ollama API). Proven track record of developing autonomous robotics and recommendation engines with sub-2-second edge latency and 85%+ accuracy. Seeking to contribute strong algorithmic problem-solving and software development to high-impact AI/ML engineering teams.
 
-**For [YOUR_SECONDARY_ROLE_TYPE] roles:**
-> [YOUR_PROFILE_STATEMENT_TEMPLATE_2]
+**For DevOps & Automation roles:**
+> Software and systems-oriented engineering undergraduate with practical experience in Linux (Ubuntu/Raspbian), Docker containerization, Jenkins CI/CD workflows, and Git collaboration. Passionate about automating deployment pipelines, reproducible infrastructure, and bridging machine learning models to production systems.
 
 Statements labeled *[Used for: <company>_<role>]* were extracted from archived application drafts by `/setup` Path A. They are **phrasing references, never fact sources**: when drafting from one, every factual claim still comes from `01-candidate-profile.md` - a past tailored draft does not vouch for its own accuracy.
 

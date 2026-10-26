@@ -89,6 +89,11 @@ documents/interview/**
 
 # Personal job search tracking
 job_search_tracker.csv
+temp_posting.txt
+candidates.json
+collected_jobs.json
+enriched_candidates.json
+store_ready.json
 
 # Gmail sync state (message IDs, subjects - personal data)
 gmail_sync/

@@ -60,9 +60,9 @@ How well do the required/preferred skills align with the candidate's capabilitie
 | 40-59 | Partial match, significant upskilling needed |
 | 0-39 | Fundamental mismatch |
 
-**Strong match areas:** [YOUR_PRIMARY_SKILLS]
-**Moderate match areas:** [YOUR_SECONDARY_SKILLS]
-**Weak match areas:** [SKILLS_YOU_LACK]
+**Strong match areas:** Python, Machine Learning (Scikit-learn), Data Structures & Algorithms, Linux (Ubuntu, Raspbian), Git/GitHub, LLM integration (Ollama API), Raspberry Pi, Embedded AI prototyping
+**Moderate match areas:** Docker (basics), Jenkins, CI/CD pipeline concepts, Computer Vision basics, Speech-to-Text / Text-to-Speech pipelines, REST APIs
+**Weak match areas:** Enterprise cloud multi-region architecture (AWS/GCP at scale), Kubernetes cluster management, C++ systems programming, legacy monolithic frameworks
 
 ### 2. Experience Match (0-100)
 Does work history align with what they're looking for? Match on the function and nature of the work performed, not the literal job title - a "Data Consultant" and a "Data Scientist" role can be functionally identical.
@@ -74,9 +74,9 @@ Does work history align with what they're looking for? Match on the function and
 | 40-59 | Adjacent experience, would need to make the case |
 | 0-39 | Unrelated experience |
 
-**Strong:** [YOUR_DIRECT_EXPERIENCE_DOMAINS]
-**Moderate:** [YOUR_ADJACENT_EXPERIENCE]
-**Entry-level:** [ROLES_WITH_LIMITED_EXPERIENCE]
+**Strong:** Applied Python development, Machine Learning implementation, Embedded AI & edge robotics, automation scripting
+**Moderate:** DevOps internships, CI/CD automation, cloud fundamentals, web/API integration
+**Entry-level:** Senior/Staff engineering positions requiring 3+ years enterprise production experience
 
 ### 3. Behavioral/Culture Fit (0-100)
 Does the role and company culture match the behavioral profile?
@@ -91,10 +91,9 @@ Does the role and company culture match the behavioral profile?
 **Red flags to research:** Department disorganization, work dominated by maintenance over development, poor chemistry with leadership, culture mismatches. Check reviews, media coverage, LinkedIn connections, and network contacts for insider perspective.
 
 ### 4. Location & Logistics (Pass/Fail + Notes)
-- Within commute range: PASS
-- Remote with occasional office: PASS
-- Requires relocation: FAIL (deal-breaker)
-- Frequent international travel: FLAG (discuss with user)
+- Within commute range (Bengaluru metro / hybrid): PASS
+- Remote (India or Global): PASS
+- Requires relocation outside Bengaluru without remote option: FLAG / DISCUSS
 
 ### 5. Career Alignment & Motivation (0-100)
 Does this role advance career goals and contain tasks that energize?
@@ -107,19 +106,19 @@ Does this role advance career goals and contain tasks that energize?
 | 0-39 | Dead end or backwards step |
 
 **Career goals:**
-- [YOUR_CAREER_GOAL_1]
-- [YOUR_CAREER_GOAL_2]
-- [YOUR_CAREER_GOAL_3]
+- Secure an AI/ML Engineer, Python Developer, or DevOps internship to contribute to real-world software and automation
+- Deepen expertise in scalable machine learning pipelines, LLM deployment, and modern cloud infrastructure
+- Build a track record of high-impact production engineering leading to a strong graduate software career
 
 **Motivation filter:** Evaluate not just whether you *can* do the tasks, but whether the tasks will *energize* you. Consider:
-- Tasks that energize: [YOUR_ENERGIZING_TASKS]
-- Tasks that drain: [YOUR_DRAINING_TASKS]
+- Tasks that energize: Building autonomous AI systems, writing clean Python code, automating deployment pipelines, solving tricky debugging problems, hands-on prototyping
+- Tasks that drain: Repetitive manual data entry, undocumented legacy code maintenance with zero test coverage, bureaucratic environments that discourage experimentation
 - Non-task factors: leadership style, department culture, company values, degree of autonomy
 
 **Life situation alignment:** Consider personal constraints:
-- **Security**: [YOUR_FINANCIAL_SITUATION_CONTEXT]
-- **Flexibility**: [YOUR_SCHEDULE_CONSTRAINTS]
-- **Professional development**: [YOUR_GROWTH_PRIORITIES]
+- **Security**: Undergraduate graduating in 2027 seeking paid internships, co-ops, or entry-level roles
+- **Flexibility**: Available for full-time internships, remote projects, and flexible hybrid arrangements in Bengaluru
+- **Professional development**: Technical mentorship, exposure to production codebases, and modern engineering practices
 
 ### 6. Salary Benchmark (Optional)
 
