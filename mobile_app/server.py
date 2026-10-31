@@ -83,53 +83,70 @@ def is_indian_location(location_str: str) -> bool:
 
 def search_unstop(query: str, location: str = "") -> List[Dict]:
     """Search Unstop public opportunity API (India tech first)."""
-    try:
-        url = "https://unstop.com/api/public/opportunity/search-result"
-        params = {
-            "opportunity": "internships" if "intern" in query.lower() else "jobs",
-            "searchTerm": query,
-            "page": 1,
-            "per_page": 20,
-        }
-        headers = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)"}
-        resp = requests.get(url, params=params, headers=headers, timeout=8)
-        if resp.status_code == 200:
-            data = resp.json().get("data", {}).get("data", [])
-            results = []
-            for item in data:
-                loc = item.get("region") or location or "India"
-                if not is_indian_location(loc):
-                    continue
-                org = item.get("organisation", {}) or {}
-                results.append({
-                    "id": str(item.get("id", "")),
-                    "title": item.get("title") or "Opportunity",
-                    "company": org.get("name") or "Company",
-                    "location": loc,
-                    "date": str(item.get("updated_at") or "")[:10],
-                    "url": item.get("public_url") or item.get("seo_url") or f"https://unstop.com/o/{item.get('id')}",
-                    "snippet": f"Internship/Job at {org.get('name', 'Company')}",
-                    "platform": "unstop",
-                })
-            return results
-    except Exception as e:
-        print("[Unstop Error]:", e)
-    return []
+    results = []
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept": "application/json, text/plain, */*",
+    }
+
+    # Query both jobs and internships
+    for opp in ["jobs", "internships"]:
+        try:
+            url = "https://unstop.com/api/public/opportunity/search-result"
+            params = {
+                "opportunity": opp,
+                "searchTerm": query,
+                "page": 1,
+                "per_page": 20,
+            }
+            resp = requests.get(url, params=params, headers=headers, timeout=8)
+            if resp.status_code == 200:
+                data = resp.json().get("data", {}).get("data", [])
+                for item in data:
+                    addr = item.get("address_with_country_logo") or {}
+                    city = addr.get("city")
+                    state = addr.get("state")
+                    if city and state:
+                        loc = f"{city}, {state}, India"
+                    elif city or state:
+                        loc = f"{city or state}, India"
+                    else:
+                        loc = "India (Remote/Hybrid)"
+
+                    org = item.get("organisation", {}) or {}
+                    results.append({
+                        "id": str(item.get("id", "")),
+                        "title": item.get("title") or f"{opp.capitalize()} Opportunity",
+                        "company": org.get("name") or "Tech Company",
+                        "location": loc,
+                        "date": str(item.get("updated_at") or "")[:10],
+                        "url": item.get("public_url") or item.get("seo_url") or f"https://unstop.com/o/{item.get('id')}",
+                        "snippet": f"{opp.capitalize()} at {org.get('name', 'Company')}",
+                        "platform": "unstop",
+                    })
+        except Exception as e:
+            print(f"[Unstop {opp} Error]:", e)
+
+    return results
 
 
 def search_freehire(query: str, location: str = "") -> List[Dict]:
     """Search FreeHire aggregator API (filtered to India)."""
     try:
         url = "https://freehire.me/api/v1/jobs"
-        params = {"q": f"{query} India", "limit": 25}
-        headers = {"User-Agent": "Mozilla/5.0 (Mobile; AIJobSearch/1.0)"}
+        params = {"q": query, "limit": 30}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Accept": "application/json",
+        }
         resp = requests.get(url, params=params, headers=headers, timeout=8)
         if resp.status_code == 200:
             data = resp.json().get("data", [])
             results = []
             for item in data:
-                loc = item.get("location") or "Remote"
-                if not is_indian_location(loc):
+                loc = item.get("location") or ""
+                # Must be strictly Indian location
+                if not loc or not is_indian_location(loc):
                     continue
                 results.append({
                     "id": str(item.get("id", "")),
@@ -148,15 +165,21 @@ def search_freehire(query: str, location: str = "") -> List[Dict]:
 
 
 def load_cached_jobs(query: str) -> List[Dict]:
-    """Loads bundled verified listings from collected_jobs.json (filtered to India)."""
-    for p in [ROOT_DIR / "collected_jobs.json", APP_DIR / "collected_jobs.json"]:
+    """Loads bundled verified Indian listings from collected_jobs.json."""
+    candidates = [
+        APP_DIR / "collected_jobs.json",
+        ROOT_DIR / "collected_jobs.json",
+        Path("mobile_app/collected_jobs.json"),
+        Path("collected_jobs.json"),
+    ]
+    for p in candidates:
         if p.exists():
             try:
                 cached = json.loads(p.read_text(encoding="utf-8"))
-                q_terms = query.lower().split()
+                q_terms = [t for t in query.lower().split() if len(t) > 1]
                 matches = []
                 for j in cached:
-                    loc = j.get("location", "Bengaluru, India")
+                    loc = j.get("location", "Bengaluru, Karnataka, India")
                     if not is_indian_location(loc):
                         continue
                     text = f"{j.get('title', '')} {j.get('company', '')}".lower()
@@ -171,9 +194,10 @@ def load_cached_jobs(query: str) -> List[Dict]:
                             "snippet": j.get("title", ""),
                             "platform": (j.get("source_portal") or "linkedin").replace("-search", ""),
                         })
-                return matches
-            except Exception:
-                pass
+                if matches:
+                    return matches
+            except Exception as e:
+                print("[Cache Load Error]:", e)
     return []
 
 
