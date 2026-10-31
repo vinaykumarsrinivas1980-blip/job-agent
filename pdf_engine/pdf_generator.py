@@ -26,12 +26,14 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = ROOT_DIR / "exported_pdfs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Primary color palette - modern corporate banking style
-COLOR_PRIMARY = colors.HexColor("#1A365D")    # Deep Navy
-COLOR_SECONDARY = colors.HexColor("#2B6CB0")  # Slate Blue
-COLOR_TEXT = colors.HexColor("#2D3748")       # Charcoal Body
-COLOR_MUTED = colors.HexColor("#718096")      # Muted Gray
-COLOR_LINE = colors.HexColor("#CBD5E0")       # Border rule
+# Two-color scheme matching user's canonical LaTeX document:
+# Primary accent: Navy Blue (#1F3864) for name, section headers, and dividing rules
+# Body text: Charcoal / Off-black (#222222) for content text
+COLOR_PRIMARY = colors.HexColor("#1F3864")
+COLOR_SECONDARY = colors.HexColor("#1F3864")
+COLOR_TEXT = colors.HexColor("#222222")
+COLOR_MUTED = colors.HexColor("#555555")
+COLOR_LINE = colors.HexColor("#1F3864")
 
 
 def get_base_styles():
@@ -39,9 +41,9 @@ def get_base_styles():
 
     title_style = ParagraphStyle(
         "CandidateName",
-        fontName="Helvetica-Bold",
-        fontSize=20,
-        leading=24,
+        fontName="Times-Bold",
+        fontSize=18,
+        leading=22,
         textColor=COLOR_PRIMARY,
         alignment=1,  # Center
         spaceAfter=4,
@@ -49,28 +51,28 @@ def get_base_styles():
 
     contact_style = ParagraphStyle(
         "ContactInfo",
-        fontName="Helvetica",
-        fontSize=8.5,
-        leading=12,
-        textColor=COLOR_MUTED,
+        fontName="Times-Roman",
+        fontSize=9,
+        leading=13,
+        textColor=COLOR_TEXT,
         alignment=1,
-        spaceAfter=8,
+        spaceAfter=6,
     )
 
     section_heading_style = ParagraphStyle(
         "SectionHeading",
-        fontName="Helvetica-Bold",
+        fontName="Times-Bold",
         fontSize=11,
         leading=14,
         textColor=COLOR_PRIMARY,
-        spaceBefore=8,
-        spaceAfter=3,
+        spaceBefore=10,
+        spaceAfter=2,
         textTransform="uppercase",
     )
 
     item_title_style = ParagraphStyle(
         "ItemTitle",
-        fontName="Helvetica-Bold",
+        fontName="Times-Bold",
         fontSize=9.5,
         leading=13,
         textColor=COLOR_TEXT,
@@ -78,7 +80,7 @@ def get_base_styles():
 
     item_meta_style = ParagraphStyle(
         "ItemMeta",
-        fontName="Helvetica",
+        fontName="Times-Italic",
         fontSize=8.5,
         leading=12,
         textColor=COLOR_MUTED,
@@ -87,22 +89,22 @@ def get_base_styles():
 
     body_style = ParagraphStyle(
         "BodyDark",
-        fontName="Helvetica",
-        fontSize=9,
-        leading=13,
+        fontName="Times-Roman",
+        fontSize=9.5,
+        leading=13.5,
         textColor=COLOR_TEXT,
         spaceAfter=4,
     )
 
     bullet_style = ParagraphStyle(
         "BulletItem",
-        fontName="Helvetica",
-        fontSize=8.5,
-        leading=12,
+        fontName="Times-Roman",
+        fontSize=9,
+        leading=13,
         textColor=COLOR_TEXT,
-        leftIndent=12,
-        firstLineIndent=-8,
-        spaceAfter=2.5,
+        leftIndent=14,
+        firstLineIndent=-10,
+        spaceAfter=3,
     )
 
     styles.add(title_style)
@@ -121,8 +123,8 @@ def clean_markdown_formatting(text: str) -> str:
     text = text.replace("&", "&amp;")
     text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
     text = re.sub(r"\*(.+?)\*", r"<i>\1</i>", text)
-    # [label](url) -> <u><font color="#2B6CB0">label</font></u>
-    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<u><font color="#2B6CB0">\1</font></u>', text)
+    # [label](url) -> <u><font color="#1F3864">label</font></u>
+    text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r'<u><font color="#1F3864">\1</font></u>', text)
     return text
 
 
@@ -159,7 +161,7 @@ def build_resume_pdf(markdown_content: str, output_path: Path, candidate_name: s
         if i <= 4 and ("|" in line or "@" in line or "LinkedIn" in line):
             cleaned = clean_markdown_formatting(line)
             story.append(Paragraph(cleaned, styles["ContactInfo"]))
-            story.append(HRFlowable(width="100%", thickness=1, color=COLOR_LINE, spaceBefore=2, spaceAfter=6))
+            story.append(HRFlowable(width="100%", thickness=0.75, color=COLOR_PRIMARY, spaceBefore=2, spaceAfter=6))
             i += 1
             continue
 
@@ -168,7 +170,7 @@ def build_resume_pdf(markdown_content: str, output_path: Path, candidate_name: s
             heading_text = line.replace("### ", "").strip()
             story.append(Spacer(1, 4))
             story.append(Paragraph(heading_text, styles["SectionHeading"]))
-            story.append(HRFlowable(width="100%", thickness=0.8, color=COLOR_SECONDARY, spaceBefore=1, spaceAfter=5))
+            story.append(HRFlowable(width="100%", thickness=0.75, color=COLOR_PRIMARY, spaceBefore=1, spaceAfter=5))
             i += 1
             continue
 
