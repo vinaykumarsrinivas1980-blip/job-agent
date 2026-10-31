@@ -140,17 +140,28 @@ async function executeSearch(query: SearchQuery): Promise<JobResult[]> {
     } catch {}
   }
 
+  const INDIAN_KEYWORDS = [
+    "india", "bengaluru", "bangalore", "karnataka", "hyderabad", "telangana",
+    "pune", "mumbai", "maharashtra", "delhi", "noida", "gurgaon", "gurugram",
+    "chennai", "tamil nadu", "kolkata", "ahmedabad", "gujarat", "surat",
+    "kochi", "kerala", "indore", "jaipur", "chandigarh", "mysore", "mangalore",
+    "bhopal", "lucknow", "nagpur", "coimbatore", "visakhapatnam", "vizag",
+    "thiruvananthapuram", "trivandrum", "bhubaneswar", "faridabad", "ghaziabad",
+  ]
+
   const FOREIGN_EXCLUSIONS = [
     "france", "paris", "united states", "usa", "germany", "berlin",
     "united kingdom", "london", "canada", "toronto", "australia", "sydney",
     "netherlands", "amsterdam", "singapore", "ireland", "dublin",
     "switzerland", "zurich", "poland", "warsaw", "brazil", "japan", "tokyo",
-    "spain", "madrid", "italy", "rome", "sweden", "denmark", "copenhagen", "austria",
+    "spain", "madrid", "italy", "rome", "sweden", "denmark", "copenhagen",
+    "austria", "hungary", "budapest", "romania", "czech", "prague",
   ]
 
   const indianJobsOnly = combined.filter((j) => {
     const loc = (j.location || "").toLowerCase()
-    return !FOREIGN_EXCLUSIONS.some((f) => loc.includes(f))
+    if (FOREIGN_EXCLUSIONS.some((f) => loc.includes(f))) return false
+    return INDIAN_KEYWORDS.some((ind) => loc.includes(ind))
   })
 
   indianJobsOnly.sort((a, b) => {

@@ -505,7 +505,8 @@ async def api_search(request):
 
     for j in (unstop_jobs + freehire_jobs + cached_jobs):
         u = j.get("url")
-        if u and u not in seen_urls:
+        loc_str = j.get("location", "")
+        if u and u not in seen_urls and is_indian_location(loc_str):
             seen_urls.add(u)
             combined.append(j)
 
