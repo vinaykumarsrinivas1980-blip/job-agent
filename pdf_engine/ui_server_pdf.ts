@@ -140,13 +140,26 @@ async function executeSearch(query: SearchQuery): Promise<JobResult[]> {
     } catch {}
   }
 
-  combined.sort((a, b) => {
+  const FOREIGN_EXCLUSIONS = [
+    "france", "paris", "united states", "usa", "germany", "berlin",
+    "united kingdom", "london", "canada", "toronto", "australia", "sydney",
+    "netherlands", "amsterdam", "singapore", "ireland", "dublin",
+    "switzerland", "zurich", "poland", "warsaw", "brazil", "japan", "tokyo",
+    "spain", "madrid", "italy", "rome", "sweden", "denmark", "copenhagen", "austria",
+  ]
+
+  const indianJobsOnly = combined.filter((j) => {
+    const loc = (j.location || "").toLowerCase()
+    return !FOREIGN_EXCLUSIONS.some((f) => loc.includes(f))
+  })
+
+  indianJobsOnly.sort((a, b) => {
     if (!a.date) return 1
     if (!b.date) return -1
     return b.date.localeCompare(a.date)
   })
 
-  return combined
+  return indianJobsOnly
 }
 
 function getTrackerData() {

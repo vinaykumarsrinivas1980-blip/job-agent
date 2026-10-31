@@ -43,10 +43,46 @@ except ImportError:
     from pdf_generator import build_resume_pdf, build_cover_letter_pdf
 
 
+INDIAN_KEYWORDS = [
+    "india", "bengaluru", "bangalore", "karnataka", "hyderabad", "telangana",
+    "pune", "mumbai", "maharashtra", "delhi", "noida", "gurgaon", "gurugram",
+    "chennai", "tamil nadu", "kolkata", "ahmedabad", "gujarat", "surat",
+    "kochi", "kerala", "indore", "jaipur", "chandigarh", "mysore", "mangalore",
+    "bhopal", "lucknow", "nagpur", "coimbatore", "visakhapatnam", "vizag",
+    "thiruvananthapuram", "trivandrum", "bhubaneswar", "faridabad", "ghaziabad",
+]
+
+FOREIGN_EXCLUSIONS = [
+    "france", "paris", "united states", "usa", "germany", "berlin",
+    "united kingdom", "london", "canada", "toronto", "australia", "sydney",
+    "netherlands", "amsterdam", "singapore", "ireland", "dublin",
+    "switzerland", "zurich", "poland", "warsaw", "brazil", "japan", "tokyo",
+    "spain", "madrid", "italy", "rome", "sweden", "denmark", "copenhagen",
+    "austria", "belgium", "brussels", "norway", "finland", "new zealand",
+]
+
+
+def is_indian_location(location_str: str) -> bool:
+    """Enforces strict filtering: only Indian tech hubs or India-based remote roles."""
+    if not location_str:
+        return True  # If unspecified, allow as default Indian search context
+    loc = location_str.lower().strip()
+    # 1. Immediately drop foreign country / city matches
+    if any(foreign in loc for foreign in FOREIGN_EXCLUSIONS):
+        return False
+    # 2. Check for Indian keywords
+    if any(ind in loc for ind in INDIAN_KEYWORDS):
+        return True
+    # 3. Allow generic 'remote' only if no foreign entity mentioned
+    if "remote" in loc and not any(f in loc for f in FOREIGN_EXCLUSIONS):
+        return True
+    return False
+
+
 # --- JOB SEARCH ENGINES (Pure Python, Zero External CLI Dependency) ---
 
 def search_unstop(query: str, location: str = "") -> List[Dict]:
-    """Search Unstop public opportunity API."""
+    """Search Unstop public opportunity API (India tech first)."""
     try:
         url = "https://unstop.com/api/public/opportunity/search-result"
         params = {
@@ -61,12 +97,15 @@ def search_unstop(query: str, location: str = "") -> List[Dict]:
             data = resp.json().get("data", {}).get("data", [])
             results = []
             for item in data:
+                loc = item.get("region") or location or "India"
+                if not is_indian_location(loc):
+                    continue
                 org = item.get("organisation", {}) or {}
                 results.append({
                     "id": str(item.get("id", "")),
                     "title": item.get("title") or "Opportunity",
                     "company": org.get("name") or "Company",
-                    "location": item.get("region") or location or "India",
+                    "location": loc,
                     "date": str(item.get("updated_at") or "")[:10],
                     "url": item.get("public_url") or item.get("seo_url") or f"https://unstop.com/o/{item.get('id')}",
                     "snippet": f"Internship/Job at {org.get('name', 'Company')}",
@@ -79,21 +118,24 @@ def search_unstop(query: str, location: str = "") -> List[Dict]:
 
 
 def search_freehire(query: str, location: str = "") -> List[Dict]:
-    """Search FreeHire aggregator API."""
+    """Search FreeHire aggregator API (filtered to India)."""
     try:
         url = "https://freehire.me/api/v1/jobs"
-        params = {"q": query, "limit": 20}
+        params = {"q": f"{query} India", "limit": 25}
         headers = {"User-Agent": "Mozilla/5.0 (Mobile; AIJobSearch/1.0)"}
         resp = requests.get(url, params=params, headers=headers, timeout=8)
         if resp.status_code == 200:
             data = resp.json().get("data", [])
             results = []
             for item in data:
+                loc = item.get("location") or "Remote"
+                if not is_indian_location(loc):
+                    continue
                 results.append({
                     "id": str(item.get("id", "")),
                     "title": item.get("title") or "Position",
                     "company": item.get("company") or "Tech Company",
-                    "location": item.get("location") or "Remote",
+                    "location": loc,
                     "date": str(item.get("created_at") or "")[:10],
                     "url": item.get("url") or item.get("apply_url") or "https://freehire.me",
                     "snippet": item.get("summary") or item.get("title"),
@@ -106,7 +148,7 @@ def search_freehire(query: str, location: str = "") -> List[Dict]:
 
 
 def load_cached_jobs(query: str) -> List[Dict]:
-    """Loads bundled verified listings from collected_jobs.json."""
+    """Loads bundled verified listings from collected_jobs.json (filtered to India)."""
     for p in [ROOT_DIR / "collected_jobs.json", APP_DIR / "collected_jobs.json"]:
         if p.exists():
             try:
@@ -114,13 +156,16 @@ def load_cached_jobs(query: str) -> List[Dict]:
                 q_terms = query.lower().split()
                 matches = []
                 for j in cached:
+                    loc = j.get("location", "Bengaluru, India")
+                    if not is_indian_location(loc):
+                        continue
                     text = f"{j.get('title', '')} {j.get('company', '')}".lower()
                     if not q_terms or any(t in text for t in q_terms):
                         matches.append({
                             "id": str(j.get("id", "")),
                             "title": j.get("title", ""),
                             "company": j.get("company", ""),
-                            "location": j.get("location", "Bengaluru, India"),
+                            "location": loc,
                             "date": j.get("date", ""),
                             "url": j.get("url", ""),
                             "snippet": j.get("title", ""),
